@@ -78,6 +78,7 @@ theme: yelee
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
-  type:
+  type: git
+  repo: git@github.com:8-5-0/850-Blog.git
 
 since: 2018
