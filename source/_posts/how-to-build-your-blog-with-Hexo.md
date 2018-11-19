@@ -30,7 +30,13 @@ git clone https://github.com/MOxFIVE/hexo-theme-yelee.git themes/yelee
 sudo hexo s -p 80
 ```
 启动Hexo server，然后在浏览器中访问localhost，如果前面的操作没有问题，应该就会出现正常界面了。剩下的事情就是写作啦，具体如何操作请自行阅读[官方文档](https://hexo.io/zh-cn/docs)。
-
+## 部署静态页面
+动态加载实在是太慢了，我们需要更加快速的静态页面。首先通过命令
+```
+hexo g
+```
+来生成静态页面。生成完毕后可以选择通过Hexo的部署功能进行部署。配置好`_config.yml`文件中的`deploy`部分，我这里采用了git的部署方式，还有其他方式可供选择，这里不再一一列举。具体操作请自行查看文档。
+服务器上只要启一个Apache即可，非常的方便快捷。
 ## 坑点
 这里也记录一下搭建过程中遇到的坑点
 * git submodule的坑，git是个好工具，submodule是个好思想，git submodule 是个灾难。
