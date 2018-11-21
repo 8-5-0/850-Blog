@@ -1,7 +1,7 @@
 ---
 title: pwn知识点巩固（一）
 date: 2018-11-20 09:42:24
-tags: [pwn, ctf]
+tags: [pwn, ctf, "萌新向"]
 ---
 
 ## 前情提要
@@ -14,7 +14,7 @@ tags: [pwn, ctf]
 
 下图是32位下程序运行栈的布局
 
-![](../img/img_pwn-0.jpg)
+![](/img/img_pwn-0.jpg)
 ROP的核心在于一条汇编指令`retn`。函数的入口点会有这样的操作
 
 ```
