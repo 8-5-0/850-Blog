@@ -1,2 +1,4 @@
 db.json
 nohup*
+.DS_Store
+*/.DS_Store
