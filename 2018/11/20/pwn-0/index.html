@@ -15,19 +15,19 @@
 
 
 
-<meta name="description" content="前情提要从去年(2017年)春天就开始立志学pwn，但是到现在也还是处于半吊子水平，比赛做不出来，一看wp就恍然大悟的那种。深感羞愧，所以准备近期从头梳理一遍已经学过的，巩固一下知识，为学习新知识做准备。(所有涉及到汇编的部分均采用intel语法)">
+<meta name="description" content="从去年(2017年)春天就开始立志学pwn，但是到现在也还是处于半吊子水平，比赛做不出来，一看wp就恍然大悟的那种。深感羞愧，所以准备近期从头梳理一遍已经学过的，巩固一下知识，为学习新知识做准备。(所有涉及到汇编的部分均采用intel语法)">
 <meta name="keywords" content="pwn,ctf,萌新向">
 <meta property="og:type" content="article">
 <meta property="og:title" content="pwn知识点巩固（一）">
 <meta property="og:url" content="http://850.world/2018/11/20/pwn-0/index.html">
 <meta property="og:site_name" content="850&#39;s World">
-<meta property="og:description" content="前情提要从去年(2017年)春天就开始立志学pwn，但是到现在也还是处于半吊子水平，比赛做不出来，一看wp就恍然大悟的那种。深感羞愧，所以准备近期从头梳理一遍已经学过的，巩固一下知识，为学习新知识做准备。(所有涉及到汇编的部分均采用intel语法)">
+<meta property="og:description" content="从去年(2017年)春天就开始立志学pwn，但是到现在也还是处于半吊子水平，比赛做不出来，一看wp就恍然大悟的那种。深感羞愧，所以准备近期从头梳理一遍已经学过的，巩固一下知识，为学习新知识做准备。(所有涉及到汇编的部分均采用intel语法)">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://850.world/img/img_pwn-0.jpg">
-<meta property="og:updated_time" content="2018-11-21T08:28:32.672Z">
+<meta property="og:updated_time" content="2018-12-10T13:31:18.101Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="pwn知识点巩固（一）">
-<meta name="twitter:description" content="前情提要从去年(2017年)春天就开始立志学pwn，但是到现在也还是处于半吊子水平，比赛做不出来，一看wp就恍然大悟的那种。深感羞愧，所以准备近期从头梳理一遍已经学过的，巩固一下知识，为学习新知识做准备。(所有涉及到汇编的部分均采用intel语法)">
+<meta name="twitter:description" content="从去年(2017年)春天就开始立志学pwn，但是到现在也还是处于半吊子水平，比赛做不出来，一看wp就恍然大悟的那种。深感羞愧，所以准备近期从头梳理一遍已经学过的，巩固一下知识，为学习新知识做准备。(所有涉及到汇编的部分均采用intel语法)">
 <meta name="twitter:image" content="http://850.world/img/img_pwn-0.jpg">
 
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -185,7 +185,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ctf/">ctf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/">pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xnuca/">xnuca</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/教程/">教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂项/">杂项</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/萌新向/">萌新向</a></li></ul>
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ctf/">ctf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/">pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/writeup/">writeup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xnuca/">xnuca</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/教程/">教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂项/">杂项</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/萌新向/">萌新向</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/鹏城杯/">鹏城杯</a></li></ul>
                     </div>
                 </section>
                 
@@ -294,7 +294,7 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h2 id="前情提要"><a href="#前情提要" class="headerlink" title="前情提要"></a>前情提要</h2><p>从去年(2017年)春天就开始立志学pwn，但是到现在也还是处于半吊子水平，比赛做不出来，一看wp就恍然大悟的那种。深感羞愧，所以准备近期从头梳理一遍已经学过的，巩固一下知识，为学习新知识做准备。(所有涉及到汇编的部分均采用intel语法)<br><a id="more"></a></p>
+        <p>从去年(2017年)春天就开始立志学pwn，但是到现在也还是处于半吊子水平，比赛做不出来，一看wp就恍然大悟的那种。深感羞愧，所以准备近期从头梳理一遍已经学过的，巩固一下知识，为学习新知识做准备。(所有涉及到汇编的部分均采用intel语法)<br><a id="more"></a></p>
 <h2 id="简单认识"><a href="#简单认识" class="headerlink" title="简单认识"></a>简单认识</h2><p>什么是pwn，学习pwn断断续续这么久了，我也不能给出一个比较详细的解释，只能说说以目前自己的姿势水平来解释一下我认为的pwn。我觉得pwn，除了<code>stack smash</code>之类以leak为目的的操作，最关键的就是能控制程序流的执行，简单来说就是控制<code>eip</code>、<code>rip</code>寄存器的值。为了达到控制程序运行的效果，pwn大致上可以分为三类，栈溢出，堆溢出。第一篇文章讲讲栈溢出和ROP。</p>
 <h2 id="栈溢出"><a href="#栈溢出" class="headerlink" title="栈溢出"></a>栈溢出</h2><p>众所周知，程序运行的时候会分配一个程序运行栈。程序的执行过程可看作连续的函数调用。当一个函数执行完毕时，程序要回到调用指令的下一条指令(紧接call指令)处继续执行。函数调用过程通常使用堆栈实现，每个用户态进程对应一个调用栈结构(call stack)。编译器使用堆栈传递函数参数、保存返回地址、临时保存寄存器原有值(即函数调用的上下文)以备恢复以及存储本地局部变量。</p>
 <p>下图是32位下程序运行栈的布局</p>
@@ -325,7 +325,7 @@
         <p><span>本文标题:</span><a href="/2018/11/20/pwn-0/">pwn知识点巩固（一）</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">850</a></p>
         <p><span>发布时间:</span>2018-11-20, 09:42:24</p>
-        <p><span>最后更新:</span>2018-11-21, 16:28:32</p>
+        <p><span>最后更新:</span>2018-12-10, 21:31:18</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/11/20/pwn-0/" title="pwn知识点巩固（一）">http://850.world/2018/11/20/pwn-0/</a>
             <span class="copy-path" data-clipboard-text="原文: http://850.world/2018/11/20/pwn-0/　　作者: 850" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
@@ -361,7 +361,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前情提要"><span class="toc-number">1.</span> <span class="toc-text">前情提要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#简单认识"><span class="toc-number">2.</span> <span class="toc-text">简单认识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#栈溢出"><span class="toc-number">3.</span> <span class="toc-text">栈溢出</span></a></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#简单认识"><span class="toc-number">1.</span> <span class="toc-text">简单认识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#栈溢出"><span class="toc-number">2.</span> <span class="toc-text">栈溢出</span></a></li></ol>
         
     </div>
     <style>
@@ -453,7 +453,7 @@
         
     </div>
 
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/12/10/xnuca-library/">XNUCA 2018 final pwn第四题library writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/22/pwn-1/">pwn知识点巩固（二）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/20/pwn-0/">pwn知识点巩固（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/19/how-to-build-your-blog-with-Hexo/">从零开始的建博客生活</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/12/10/pcb-2/">pcb-2</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/10/pcb-1/">鹏城杯 2018 决赛 day1 shotshot writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/10/xnuca-library/">XNUCA 2018 final pwn第四题library writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/22/pwn-1/">pwn知识点巩固（二）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/20/pwn-0/">pwn知识点巩固（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/19/how-to-build-your-blog-with-Hexo/">从零开始的建博客生活</a></li></ul>
 
 
 
