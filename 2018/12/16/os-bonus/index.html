@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="850&#39;s World">
 <meta property="og:description" content="最近很多人来问我，os的bonus咋做。一开始我想都没想，一看就是rop么，但是sgy问周老师说不用rop，所以又想了好几种骚操作。由于周老师说只能把思路告诉同学们，所以这里记录一下想到的思路。(这里只讨论task2，task1太简单了就略过了)">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-12-16T03:14:49.194Z">
+<meta property="og:updated_time" content="2018-12-16T03:39:43.706Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="OS 课程bonus的几种思路">
 <meta name="twitter:description" content="最近很多人来问我，os的bonus咋做。一开始我想都没想，一看就是rop么，但是sgy问周老师说不用rop，所以又想了好几种骚操作。由于周老师说只能把思路告诉同学们，所以这里记录一下想到的思路。(这里只讨论task2，task1太简单了就略过了)">
@@ -295,7 +295,7 @@
         <p>最近很多人来问我，os的bonus咋做。一开始我想都没想，一看就是rop么，但是sgy问周老师说不用rop，所以又想了好几种骚操作。由于周老师说只能把思路告诉同学们，所以这里记录一下想到的思路。(这里只讨论task2，task1太简单了就略过了)<br><a id="more"></a></p>
 <h2 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h2><p>题目逻辑很简单<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">puts</span>(<span class="string">"Welcome! This is an echo function."</span>);</span><br><span class="line"><span class="built_in">memset</span>(&amp;s, <span class="number">0</span>, <span class="number">0x200</span>uLL);</span><br><span class="line">v1 = read(<span class="number">0</span>, &amp;s, <span class="number">0x200</span>uLL);</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"%p read len %lld\n"</span>, &amp;v1, v1);</span><br><span class="line"><span class="built_in">printf</span>(&amp;s);</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"%p read len %lld\n"</span>, &amp;v1, v1);</span><br><span class="line"><span class="keyword">return</span> <span class="built_in">puts</span>(<span class="string">"goodbye!"</span>);</span><br></pre></td></tr></table></figure></p>
 <h3 id="solution1"><a href="#solution1" class="headerlink" title="solution1"></a>solution1</h3><p>程序没开PIE和canary，目标是跳转到指定函数，并且第一个参数为制定值。当第一个人来问的时候，想都没想，直接rop啊，第一步把puts改到memset那边，达到无限利用的效果。第二步根据上一步泄漏出的栈地址，把栈布局成<code>pop_rdi_gadget</code>-&gt;<code>指定值</code>-&gt;<code>target</code>，然后就OK了。可是呢，sgy去问周老师，周老师说这题预期解不是ROP。于是想到了第二种做法</p>
-<h3 id="solution2"><a href="#solution2" class="headerlink" title="solution2"></a>solution2</h3><p>观察到memset这个函数，第一个参数可控，所以我们这么操作，第一步还是同上。然后观察到目标函数的参数只取一个<code>unsigned int</code>， 因此，第二步我们把payload变成<code>p32(学号)+格式化字符串</code>这样。把<code>memset</code>改成目标函数的地址即可。这个可能是正解。</p>
+<h3 id="solution2"><a href="#solution2" class="headerlink" title="solution2"></a>solution2</h3><p>观察到memset这个函数，第一个参数可控，所以我们这么操作，第一步还是同上。然后观察到目标函数的参数只取一个<code>unsigned int</code>， 因此，第二步我们把payload变成<code>&quot;aaaa&quot;+p32(学号)+格式化字符串</code>这样。把<code>memset</code>跳到<code>main</code>函数的<code>strtoul</code>上面的<code>mov     rax, [rax]</code>，就能让rax存到<code>填充+学号</code>，然后把<code>strtoul</code>改成目标函数。目标函数里只取<code>edi</code>所以这样就OK了。这个我也感觉不是正解，太复杂了。</p>
 <h3 id="solution3"><a href="#solution3" class="headerlink" title="solution3"></a>solution3</h3><p>还是memset函数，观察一下动态链接库中的函数，如果我们把<code>exit</code>改到<code>read</code>，由于之前<code>rdi</code>已经是赋值成0了，<code>rsi</code>是<code>rbp-4</code> ，<code>rdx</code>并没有被操作，所以应该还是<code>0x200</code>，这样调用<code>exit</code>函数的时候就调用了<code>read</code> 相当于 <code>read(0, rbp-4, 0x200)</code> 一个明显的栈溢出，然后想干啥就干啥。<br>所以这种做法的步骤是，第一步把<code>puts</code>改到<code>memset</code>前，把<code>memset</code>改到目标函数，把<code>exit</code>改到<code>read</code>，然后rop。</p>
 <h3 id="solution4"><a href="#solution4" class="headerlink" title="solution4"></a>solution4</h3><p>最简单直接的方法，把<code>puts</code>改到success那边，不过应该是不满足拿分条件的。</p>
 
@@ -309,7 +309,7 @@
         <p><span>本文标题:</span><a href="/2018/12/16/os-bonus/">OS 课程bonus的几种思路</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">850</a></p>
         <p><span>发布时间:</span>2018-12-16, 10:48:05</p>
-        <p><span>最后更新:</span>2018-12-16, 11:14:49</p>
+        <p><span>最后更新:</span>2018-12-16, 11:39:43</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/12/16/os-bonus/" title="OS 课程bonus的几种思路">http://850.world/2018/12/16/os-bonus/</a>
             <span class="copy-path" data-clipboard-text="原文: http://850.world/2018/12/16/os-bonus/　　作者: 850" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
