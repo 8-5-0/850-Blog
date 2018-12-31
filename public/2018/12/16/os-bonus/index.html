@@ -15,17 +15,18 @@
 
 
 
-<meta name="description" content="Name: 850(Zhu Jiaqi) From: Danyang, Zhenjiang, Jiangsu Student of Zhejiang University Profession: Information Security Team AAA email: zjq000100@outlook.com">
-<meta property="og:type" content="website">
-<meta property="og:title" content="About Me">
-<meta property="og:url" content="http://850.world/about/index.html">
+<meta name="description" content="最近很多人来问我，os的bonus咋做。一开始我想都没想，一看就是rop么，但是sgy问周老师说不用rop，所以又想了好几种骚操作。由于周老师说只能把思路告诉同学们，所以这里记录一下想到的思路。(这里只讨论task2，task1太简单了就略过了)">
+<meta name="keywords" content="pwn,萌新向">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OS 课程bonus的几种思路">
+<meta property="og:url" content="http://850.world/2018/12/16/os-bonus/index.html">
 <meta property="og:site_name" content="850&#39;s World">
-<meta property="og:description" content="Name: 850(Zhu Jiaqi) From: Danyang, Zhenjiang, Jiangsu Student of Zhejiang University Profession: Information Security Team AAA email: zjq000100@outlook.com">
+<meta property="og:description" content="最近很多人来问我，os的bonus咋做。一开始我想都没想，一看就是rop么，但是sgy问周老师说不用rop，所以又想了好几种骚操作。由于周老师说只能把思路告诉同学们，所以这里记录一下想到的思路。(这里只讨论task2，task1太简单了就略过了)">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-11-19T06:48:27.057Z">
+<meta property="og:updated_time" content="2018-12-16T03:56:17.078Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="About Me">
-<meta name="twitter:description" content="Name: 850(Zhu Jiaqi) From: Danyang, Zhenjiang, Jiangsu Student of Zhejiang University Profession: Information Security Team AAA email: zjq000100@outlook.com">
+<meta name="twitter:title" content="OS 课程bonus的几种思路">
+<meta name="twitter:description" content="最近很多人来问我，os的bonus咋做。一开始我想都没想，一看就是rop么，但是sgy问周老师说不用rop，所以又想了好几种骚操作。由于周老师说只能把思路告诉同学们，所以这里记录一下想到的思路。(这里只讨论task2，task1太简单了就略过了)">
 
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
@@ -57,7 +58,7 @@
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 
-<title>About Me | 850&#39;s World</title>
+<title>OS 课程bonus的几种思路 | 850&#39;s World</title>
 
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
@@ -67,7 +68,7 @@
         fancybox: true,
         animate: true,
         isHome: false,
-        isPost: false,
+        isPost: true,
         isArchive: false,
         isTag: false,
         isCategory: false,
@@ -251,11 +252,11 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我">
 </nav>
-      <div class="body-wrap"><article id="page-" class="article article-type-page" itemscope="" itemprop="blogPost">
+      <div class="body-wrap"><article id="post-os-bonus" class="article article-type-post" itemscope="" itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/about/index.html" class="article-date">
-      <time datetime="2018-11-19T06:48:27.057Z" itemprop="datePublished">2018-11-19</time>
+      <a href="/2018/12/16/os-bonus/" class="article-date">
+      <time datetime="2018-12-16T02:48:05.000Z" itemprop="datePublished">2018-12-16</time>
 </a>
 
 
@@ -270,7 +271,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      About Me
+      OS 课程bonus的几种思路
     </h1>
   
 
@@ -280,6 +281,10 @@
         
 
         
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/萌新向/">萌新向</a></li></ul>
+    </div>
+
         <div class="clearfix"></div>
       </div>
       
@@ -287,44 +292,76 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-              <style>
-    .article-meta { display: none; }
-    #container .article .article-title { padding-right: 0; }
-    .article-header {
-        padding: 0;
-        padding-top: 26px;
-        border-left: none;
-        text-align: center;
-    }
-    .article-header:hover { border-left: none; }
-    .article-title { font-size: 1.6em }
-    .article-entry hr { margin: 0;}
-    .article-meta,
-    #container .article-info-post.article-info { display: none;}
-    #container .article .article-title { padding: 0; }
-</style>
-
-
-          
-        <ul>
-<li>Name: 850(Zhu Jiaqi)</li>
-<li>From: Danyang, Zhenjiang, Jiangsu</li>
-<li>Student of Zhejiang University</li>
-<li>Profession: Information Security</li>
-<li>Team AAA</li>
-<li>email: <a href="mailto:zjq000100@outlook.com">zjq000100@outlook.com</a></li>
-</ul>
-
+        <p>最近很多人来问我，os的bonus咋做。一开始我想都没想，一看就是rop么，但是sgy问周老师说不用rop，所以又想了好几种骚操作。由于周老师说只能把思路告诉同学们，所以这里记录一下想到的思路。(这里只讨论task2，task1太简单了就略过了)<br><a id="more"></a></p>
+<h2 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h2><p>题目逻辑很简单<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">puts</span>(<span class="string">"Welcome! This is an echo function."</span>);</span><br><span class="line"><span class="built_in">memset</span>(&amp;s, <span class="number">0</span>, <span class="number">0x200</span>uLL);</span><br><span class="line">v1 = read(<span class="number">0</span>, &amp;s, <span class="number">0x200</span>uLL);</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"%p read len %lld\n"</span>, &amp;v1, v1);</span><br><span class="line"><span class="built_in">printf</span>(&amp;s);</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"%p read len %lld\n"</span>, &amp;v1, v1);</span><br><span class="line"><span class="keyword">return</span> <span class="built_in">puts</span>(<span class="string">"goodbye!"</span>);</span><br></pre></td></tr></table></figure></p>
+<h3 id="solution1"><a href="#solution1" class="headerlink" title="solution1"></a>solution1</h3><p>程序没开PIE和canary，目标是跳转到指定函数，并且第一个参数为制定值。当第一个人来问的时候，想都没想，直接rop啊，第一步把puts改到memset那边，达到无限利用的效果。第二步根据上一步泄漏出的栈地址，把栈布局成<code>pop_rdi_gadget</code>-&gt;<code>指定值</code>-&gt;<code>target</code>，然后就OK了。可是呢，sgy去问周老师，周老师说这题预期解不是ROP。于是想到了第二种做法</p>
+<h3 id="solution2"><a href="#solution2" class="headerlink" title="solution2"></a>solution2</h3><p>观察到memset这个函数，第一个参数可控，所以我们这么操作，第一步还是同上。然后观察到目标函数的参数只取一个<code>unsigned int</code>， 因此，第二步我们把payload变成<code>p32(学号)+填充+格式化字符串</code>这样。把<code>memset</code>跳到<code>main</code>函数的<code>strtoul</code>上面的<code>mov     rax, [rax]</code>，然后把<code>strtoul</code>改成目标函数。这样就OK了。这个我也感觉不是正解，太复杂了。</p>
+<h1 id="更简单的暂时想不到了"><a href="#更简单的暂时想不到了" class="headerlink" title="更简单的暂时想不到了"></a>更简单的暂时想不到了</h1>
       
     </div>
     
   </div>
   
     
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/12/16/os-bonus/">OS 课程bonus的几种思路</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">850</a></p>
+        <p><span>发布时间:</span>2018-12-16, 10:48:05</p>
+        <p><span>最后更新:</span>2018-12-16, 11:56:17</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/12/16/os-bonus/" title="OS 课程bonus的几种思路">http://850.world/2018/12/16/os-bonus/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://850.world/2018/12/16/os-bonus/　　作者: 850" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target="_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
 
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2018/12/31/35c3Junior/">
+                    35c3CTF-Junior 两/三道pwn writeup
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/12/10/pcb-2/">
+                    鹏城杯 2018 决赛 day2 littlenote writeup
+                </a>
+            </div>
+        
+    </nav>
 
   
 </article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#题目分析"><span class="toc-number">1.</span> <span class="toc-text">题目分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#solution1"><span class="toc-number">1.1.</span> <span class="toc-text">solution1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#solution2"><span class="toc-number">1.2.</span> <span class="toc-text">solution2</span></a></li></ol></li></ol><li class="toc-item toc-level-1"><a class="toc-link" href="#更简单的暂时想不到了"><span class="toc-number"></span> <span class="toc-text">更简单的暂时想不到了</span></a>
+        
+    </li></div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录" title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
 
 
 
@@ -342,7 +379,7 @@
         </div>
         <script>
             window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"About Me　| 850's World　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+                "common":{"bdSnsKey":{},"bdText":"OS 课程bonus的几种思路　| 850's World　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
         </script>
     
 
@@ -361,8 +398,8 @@
     <div id="disqus_thread"></div>
     <script>
         var disqus_config = function(){
-            this.page.url = 'http://850.world/about/index.html';
-            this.page.identifier = 'about/index.html';
+            this.page.url = 'http://850.world/2018/12/16/os-bonus/';
+            this.page.identifier = '2018/12/16/os-bonus/';
         };
         var loadComment = function(){
             var d = document, s = d.createElement('script');
@@ -379,6 +416,26 @@
 
     
 
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2018/12/31/35c3Junior/" title="上一篇: 35c3CTF-Junior 两/三道pwn writeup">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/12/10/pcb-2/" title="下一篇: 鹏城杯 2018 决赛 day2 littlenote writeup">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/12/31/35c3Junior/">35c3CTF-Junior 两/三道pwn writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/16/os-bonus/">OS 课程bonus的几种思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/10/pcb-2/">鹏城杯 2018 决赛 day2 littlenote writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/10/pcb-1/">鹏城杯 2018 决赛 day1 shotshot writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/10/xnuca-library/">XNUCA 2018 final pwn第四题library writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/22/pwn-1/">pwn知识点巩固（二）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/20/pwn-0/">pwn知识点巩固（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/19/how-to-build-your-blog-with-Hexo/">从零开始的建博客生活</a></li></ul>
 
 
 

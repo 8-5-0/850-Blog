@@ -39,15 +39,16 @@ tags: [pwn, ctf, "鹏城杯", writeup]
 .text:0000000000400AE6                 call    ___stack_chk_fail
 ```
 然后进入`to_read`函数后，会把`rsp`的值给`rbp`，而此时rsp由于我们直接跳转到`0x400aaf`，没有进行函数进入时到`sub rsp, XX`的操作。所以此时再去读0x30字节就会造成栈溢出。接下来就好办了，将栈布置成如下
-* `8*'a'` padding
-* `printf_got 的地址 +0x20`
-* `0x400aaf` 下一步rop
-* `0x18 * 'a'` padding
+
+1. `8*'a'` padding
+2. `printf_got 的地址 +0x20`
+3. `0x400aaf` 下一步rop
+4. `0x18 * 'a'` padding
 
 这样我们完成了第一阶段的rop，利用`leave ret`将rbp指向got表附近，接下来进行第二步rop。和之前利用一样，栈的布局如下
-* `system addr` 将free写成system
-* `puts addr` 不变
-* `0x400eaa` 将chk_fail函数替换成这个，利用`delete`函数，把原来执行`free(weapon)` 替换成执行`system(weapon)`
+1. `system addr` 将free写成system
+2. `puts addr` 不变
+3. `0x400eaa` 将chk_fail函数替换成这个，利用`delete`函数，把原来执行`free(weapon)` 替换成执行`system(weapon)`
 然后就get shell了。
 
 ## 感想
