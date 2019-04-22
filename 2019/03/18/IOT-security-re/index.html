@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="850&#39;s World">
 <meta property="og:description" content="谨以本文纪念这几个月因为踩坑浪费的时间">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-03-18T03:27:43.449Z">
+<meta property="og:updated_time" content="2019-03-21T06:30:08.841Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="嵌入式安全踩过的坑(持续更新)">
 <meta name="twitter:description" content="谨以本文纪念这几个月因为踩坑浪费的时间">
@@ -305,6 +305,9 @@
 <li>arm架构通过字符串引用可以找到部分加载地址，但是无法找全</li>
 <li>JTAG调试接口可以帮助动态调试。</li>
 <li>OPENOCD + JTAG + GDB 可以动态调试。</li>
+<li>可以通过下载固件更新包的方法获取固件。目前为止能够下载的固件更新包里只有ABB的是经过了加密的。</li>
+<li>OpenOCD 要选仿真器，Jlink要在cfg文件里加一个<code>adapter_khz</code>然后还要写<code>jlink serial</code>。还要选芯片，marvell的芯片只有<code>88f37x0</code> 么得我要的。</li>
+<li>Trace32看起来很屌的样子。</li>
 </ol>
 
       
@@ -317,7 +320,7 @@
         <p><span>本文标题:</span><a href="/2019/03/18/IOT-security-re/">嵌入式安全踩过的坑(持续更新)</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">850</a></p>
         <p><span>发布时间:</span>2019-03-18, 11:08:56</p>
-        <p><span>最后更新:</span>2019-03-18, 11:27:43</p>
+        <p><span>最后更新:</span>2019-03-21, 14:30:08</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2019/03/18/IOT-security-re/" title="嵌入式安全踩过的坑(持续更新)">http://850.world/2019/03/18/IOT-security-re/</a>
             <span class="copy-path" data-clipboard-text="原文: http://850.world/2019/03/18/IOT-security-re/　　作者: 850" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
