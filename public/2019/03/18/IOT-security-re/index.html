@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="850&#39;s World">
 <meta property="og:description" content="谨以本文纪念这几个月因为踩坑浪费的时间">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-03-18T03:27:43.449Z">
+<meta property="og:updated_time" content="2019-03-21T06:30:08.841Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="嵌入式安全踩过的坑(持续更新)">
 <meta name="twitter:description" content="谨以本文纪念这几个月因为踩坑浪费的时间">
@@ -183,7 +183,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/35c3-junior/">35c3 junior</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ctf/">ctf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/">pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reverse/">reverse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/writeup/">writeup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xnuca/">xnuca</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/摸鱼/">摸鱼</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/教程/">教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂项/">杂项</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/萌新向/">萌新向</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/鹏城杯/">鹏城杯</a></li></ul>
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/2019-国赛/">2019 国赛</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/35c3-junior/">35c3 junior</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/aeg/">aeg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ctf/">ctf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/">pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reverse/">reverse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/writeup/">writeup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xnuca/">xnuca</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/强网杯/">强网杯</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/摸鱼/">摸鱼</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/教程/">教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂项/">杂项</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/萌新向/">萌新向</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/鹏城杯/">鹏城杯</a></li></ul>
                     </div>
                 </section>
                 
@@ -305,6 +305,9 @@
 <li>arm架构通过字符串引用可以找到部分加载地址，但是无法找全</li>
 <li>JTAG调试接口可以帮助动态调试。</li>
 <li>OPENOCD + JTAG + GDB 可以动态调试。</li>
+<li>可以通过下载固件更新包的方法获取固件。目前为止能够下载的固件更新包里只有ABB的是经过了加密的。</li>
+<li>OpenOCD 要选仿真器，Jlink要在cfg文件里加一个<code>adapter_khz</code>然后还要写<code>jlink serial</code>。还要选芯片，marvell的芯片只有<code>88f37x0</code> 么得我要的。</li>
+<li>Trace32看起来很屌的样子。</li>
 </ol>
 
       
@@ -317,7 +320,7 @@
         <p><span>本文标题:</span><a href="/2019/03/18/IOT-security-re/">嵌入式安全踩过的坑(持续更新)</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">850</a></p>
         <p><span>发布时间:</span>2019-03-18, 11:08:56</p>
-        <p><span>最后更新:</span>2019-03-18, 11:27:43</p>
+        <p><span>最后更新:</span>2019-03-21, 14:30:08</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2019/03/18/IOT-security-re/" title="嵌入式安全踩过的坑(持续更新)">http://850.world/2019/03/18/IOT-security-re/</a>
             <span class="copy-path" data-clipboard-text="原文: http://850.world/2019/03/18/IOT-security-re/　　作者: 850" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
@@ -331,6 +334,12 @@
 
 
     <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2019/04/22/byctf2019-virtual/">
+                    2019国赛 virtual writeup
+                </a>
+            </div>
         
         
             <div id="article-nav-older" class="article-nav-title">
@@ -425,7 +434,9 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+            <a href="/2019/04/22/byctf2019-virtual/" title="上一篇: 2019国赛 virtual writeup">
+                <i class="fa fa-angle-left"></i>
+            </a>
         
 
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
@@ -437,7 +448,7 @@
         
     </div>
 
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/03/18/IOT-security-re/">嵌入式安全踩过的坑(持续更新)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/31/35c3Junior/">35c3CTF-Junior 两/三道pwn writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/16/os-bonus/">OS 课程bonus的几种思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/10/pcb-2/">鹏城杯 2018 决赛 day2 littlenote writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/10/pcb-1/">鹏城杯 2018 决赛 day1 shotshot writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/10/xnuca-library/">XNUCA 2018 final pwn第四题library writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/22/pwn-1/">pwn知识点巩固（二）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/20/pwn-0/">pwn知识点巩固（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/19/how-to-build-your-blog-with-Hexo/">从零开始的建博客生活</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/05/27/qwb2019-qual/">2019强网杯预选赛babyaeg writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/22/byctf2019-virtual/">2019国赛 virtual writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/18/IOT-security-re/">嵌入式安全踩过的坑(持续更新)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/31/35c3Junior/">35c3CTF-Junior 两/三道pwn writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/16/os-bonus/">OS 课程bonus的几种思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/10/pcb-2/">鹏城杯 2018 决赛 day2 littlenote writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/10/pcb-1/">鹏城杯 2018 决赛 day1 shotshot writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/10/xnuca-library/">XNUCA 2018 final pwn第四题library writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/22/pwn-1/">pwn知识点巩固（二）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/20/pwn-0/">pwn知识点巩固（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/19/how-to-build-your-blog-with-Hexo/">从零开始的建博客生活</a></li></ul>
 
 
 

